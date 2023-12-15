@@ -4,19 +4,23 @@
 
 `rhap5ody.js` extends `p5.js` to support conditional re-rendering – taking inspiration from `react.js`. All objects on the canvas are ordered in a structured tree layout, thus allowing for property inheritance and a standard interface for interaction. Objects also support the `freeze` method which collapses their subtree into a single bitmap image, allowing for efficient re-rendering without the need to rebuild the whole subtree. The tree inheritance structure additionally allows for relative positioning (relative to the element's parent) which id similar to `position: relative;` in css. With standard `p5.js` there is no inherent structure to the elements drawn to the canvas and so they behave similarly to `absolute` or `fixed` css positioning, where explicit x, y, width and height pixel values are supplied.
 
+## Example Demo
+
+![space scene demo](imgs/earth-demo-scene.png)
+
 ### `Obj` class
 
 Every renderable element in `rhap5ody.js` inherits from the `Obj` class - including the `Canvas` object itself. The `Obj` class definition can be found in the `core.js` file. Every `Obj` instance has exactly the following attributes.
 
-| `Obj` Attribute  | Description                                                  |
-| ---------------- | ------------------------------------------------------------ |
-| `this.parent`    | Pointer to the **parent `Obj`** in the object tree           |
-| `this.children`  | Array of pointers to the **children `Obj`** in the object tree |
-| `this.ident`     | Instance of the **`Ident`** class – `id`, `classes` etc...   |
-| `this.env`       | Instance of the **`Env`** class – `properties`, `listeners` etc... |
-| `this.freezer`   | Instance of the **`Freezer`** class – `frozen`, `frozenTo` etc... |
+| `Obj` Attribute  | Description                                                             |
+| ---------------- | ----------------------------------------------------------------------- |
+| `this.parent`    | Pointer to the **parent `Obj`** in the object tree                      |
+| `this.children`  | Array of pointers to the **children `Obj`** in the object tree          |
+| `this.ident`     | Instance of the **`Ident`** class – `id`, `classes` etc...              |
+| `this.env`       | Instance of the **`Env`** class – `properties`, `listeners` etc...      |
+| `this.freezer`   | Instance of the **`Freezer`** class – `frozen`, `frozenTo` etc...       |
 | `this.img`       | Instance of the **`GraphicsImg`** class – `p5.js` drawing functionality |
-| `this._internal` | Private object of internal properties                        |
+| `this._internal` | Private object of internal properties                                   |
 
 The `Obj` class also has a number of public methods – some of which are briefly listed below.
 
@@ -42,4 +46,4 @@ To better understand how the object tree is structured, I recommend cloning the 
 
 ---
 
-*Note: `rhap5ody.js` was primarily developed in the `TobiasLoader/P5-Canvas-Tree` repository.*
+_Note: `rhap5ody.js` was primarily developed in the `TobiasLoader/P5-Canvas-Tree` repository._

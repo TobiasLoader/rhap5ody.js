@@ -28,7 +28,7 @@ class Ident {
       const nameid = "#" + id;
       this.nameid = nameid;
       this.obj._idBubble(nameid, this.obj.getId());
-    } else this.log('setId "' + id + '" is not a valid id string');
+    } else this.obj.log('setId "' + id + '" is not a valid id string');
   }
   nullifyNameId() {
     this.nameid = null;
@@ -41,7 +41,8 @@ class Ident {
   addClass(className) {
     const regex = /^[a-zA-Z0-9-_]+$/;
     if (regex.test(className)) this.classes.push("." + className);
-    else this.log('addClass "' + iclassNamed + '" is not a valid class name');
+    else
+      this.obj.log('addClass "' + iclassNamed + '" is not a valid class name');
   }
   removeClass(className) {
     this.classes = this.classes.filter((c) => c != className);

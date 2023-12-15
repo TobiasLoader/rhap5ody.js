@@ -4,6 +4,7 @@ class Env {
     this.properties = {};
     this.pointers = {};
     this.listners = {};
+    // defaults
     this.defaults = {
       relpos: {
         x: x,
@@ -25,13 +26,31 @@ class Env {
         h: 1,
       },
     };
+    // styles
+    this.styles = {};
+    this.addStyle("display", true);
   }
 
   addProperty(name, value) {
     // for adding a new property
-    if (!(name in this.properties) && !(name in this.defaults)) {
+    if (
+      !(name in this.defaults) &&
+      !(name in this.styles) &&
+      !(name in this.properties)
+    ) {
       this.listners[name] = new Set();
       this.properties[name] = value;
+    }
+  }
+  addStyle(name, value) {
+    // for adding a new style
+    if (
+      !(name in this.defaults) &&
+      !(name in this.styles) &&
+      !(name in this.properties)
+    ) {
+      this.listners[name] = new Set();
+      this.styles[name] = value;
     }
   }
 
@@ -41,11 +60,20 @@ class Env {
       // this.obj.log("--- Setting a default property",this.obj.getId(),name)
       this.defaults[name] = update(this.defaults[name]);
       // don't rebuild if default set
-    } else if (name in this.properties) {
-      const oldValue = JSON.stringify(this.properties[name]);
-      const newValue = update(this.properties[name]);
+    } else if (name in this.styles || name in this.properties) {
+      let oldValue;
+      let newValue;
+      // if style or property then rebuild
+      if (name in this.styles) {
+        oldValue = JSON.stringify(this.styles[name]);
+        newValue = update(this.styles[name]);
+      } else {
+        oldValue = JSON.stringify(this.properties[name]);
+        newValue = update(this.properties[name]);
+      }
       if (oldValue !== JSON.stringify(newValue)) {
-        this.properties[name] = newValue;
+        if (name in this.styles) this.styles[name] = newValue;
+        else this.properties[name] = newValue;
         const rebuildlist = this.listners[name];
         const uniquerebuilds = new Set();
         for (var obj of rebuildlist) {
@@ -56,7 +84,7 @@ class Env {
         }
       }
     } else {
-      this.log('illegal set of property "' + name + '"');
+      this.obj.log('illegal set of property "' + name + '"');
     }
   }
 
@@ -67,8 +95,10 @@ class Env {
     // => properties are inherited
     if (name in this.defaults) {
       return this.defaults[name];
-    }
-    if (name in this.properties) {
+    } else if (name in this.styles) {
+      this.listners[name].add(fromobj);
+      return this.styles[name];
+    } else if (name in this.properties) {
       this.listners[name].add(fromobj);
       return this.properties[name];
     }
@@ -114,5 +144,12 @@ class Env {
       });
     }
     return null;
+  }
+  async setStyle(name, update) {
+    if (name in this.styles) await this.set(name, update);
+  }
+  getStyle(name) {
+    if (name in this.styles) return this.get(name);
+    else return null;
   }
 }

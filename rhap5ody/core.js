@@ -213,9 +213,11 @@ class Obj {
     await this.img.endbuild();
   }
   async _rebuild() {
-    console.log("Rebuild", this.getId());
-    await this._buildWrapper();
-    this._redrawBubble();
+    if (this.img.built) {
+      console.log("Rebuild", this.getId());
+      await this._buildWrapper();
+      this._redrawBubble();
+    }
   }
 
   // drawing methods
@@ -228,6 +230,15 @@ class Obj {
   }
   effects() {
     // things changing dynamically
+  }
+
+  // styles (graphics)
+  async display() {
+    await this._getEnv().setStyle("display", () => true);
+  }
+  async displayNone() {
+    await this._getEnv().setStyle("display", () => false);
+    console.log("displayNone done: display", this.get("display"));
   }
 
   // logging methods
@@ -246,7 +257,7 @@ class Obj {
     if (this.parent != null) this.parent._logBubble(txt);
   }
 
-  // misc methods
+  // mouse methods
   hover() {
     const hovering = this.img.withinImg(mouseX, mouseY);
     if (hovering) cursor("pointer");
@@ -256,6 +267,8 @@ class Obj {
   mouseClicked() {
     this._setInternal("noclick", () => true);
   }
+
+  // misc
   debug() {
     if (!this.getFrozen() || this.getFrozenHead()) {
       this._setInternal("debug", () => true);
@@ -400,7 +413,6 @@ class Base extends Obj {
       for (var el of this._getInternal("traversal")) {
         el.effects();
       }
-
       // draw only if redraw has bubbled
       if (this._getInternal("_redrawBubble")) {
         super.draw(this._getInternal("context"));

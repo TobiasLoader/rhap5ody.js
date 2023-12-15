@@ -21,7 +21,10 @@ class GraphicsImg {
     this.background = canBuildWrapper(this.background);
     this.text = canBuildWrapper(this.text);
     this.vertex = canBuildWrapper(this.vertex);
+    this.bezierVertex = canBuildWrapper(this.bezierVertex);
     this.point = canBuildWrapper(this.point);
+    this.ellipse = canBuildWrapper(this.ellipse);
+    this.image = canBuildWrapper(this.image);
     this.highlight = canBuildWrapper(this.highlight);
   }
 
@@ -31,19 +34,25 @@ class GraphicsImg {
   y(y) {
     return round((y * this.relfrozen.h + this.relfrozen.y) * this.pos.h);
   }
-  w() {
+  w(w) {
     if (this.ratio == "fixed") {
-      return round(
-        min(this.pos.w * this.relfrozen.w, this.pos.h * this.relfrozen.h)
+      return (
+        w *
+        round(min(this.pos.w * this.relfrozen.w, this.pos.h * this.relfrozen.h))
       );
-    } else return round(this.pos.w * this.relfrozen.w);
+    } else return w * round(this.pos.w * this.relfrozen.w);
   }
-  h() {
+  h(h) {
     if (this.ratio == "fixed") {
-      return round(
-        min(this.pos.w * this.relfrozen.w, this.pos.h * this.relfrozen.h)
+      return (
+        h *
+        round(min(this.pos.w * this.relfrozen.w, this.pos.h * this.relfrozen.h))
       );
-    } else return round(this.pos.h * this.relfrozen.h);
+    } else return h * round(this.pos.h * this.relfrozen.h);
+  }
+
+  getStyle(name) {
+    return this.obj._getEnv().getStyle(name);
   }
 
   startbuild() {
@@ -91,7 +100,7 @@ class GraphicsImg {
     // this.graphics.background(r,g,b);
     this.graphics.noStroke();
     this.graphics.fill(r, g, b, a);
-    this.graphics.rect(this.x(0), this.y(0), this.w(), this.h());
+    this.graphics.rect(this.x(0), this.y(0), this.w(1), this.h(1));
   }
   text(txt, x, y) {
     this.graphics.text(txt, this.x(x), this.y(y));
@@ -99,8 +108,24 @@ class GraphicsImg {
   vertex(x, y) {
     this.graphics.vertex(this.x(x), this.y(y));
   }
+  bezierVertex(cx1, cy1, cx2, cy2, x, y) {
+    this.graphics.bezierVertex(
+      this.x(cx1),
+      this.y(cy1),
+      this.x(cx2),
+      this.y(cy2),
+      this.x(x),
+      this.y(y)
+    );
+  }
   point(x, y) {
     this.graphics.point(this.x(x), this.y(y));
+  }
+  ellipse(x, y, w, h) {
+    this.graphics.ellipse(this.x(x), this.y(y), this.w(w), this.h(h));
+  }
+  image(img, x, y, w, h) {
+    this.graphics.image(img, this.x(x), this.y(y), this.w(w), this.h(h));
   }
   highlight() {
     this.graphics.strokeWeight(10);
@@ -109,9 +134,9 @@ class GraphicsImg {
     this.graphics.noFill();
     this.graphics.beginShape(QUADS);
     this.graphics.vertex(this.x(0) + 5, this.y(0) + 5);
-    this.graphics.vertex(this.x(0) - 5 + this.w(), this.y(0) + 5);
-    this.graphics.vertex(this.x(0) - 5 + this.w(), this.y(0) - 5 + this.h());
-    this.graphics.vertex(this.x(0) + 5, this.y(0) - 5 + this.h());
+    this.graphics.vertex(this.x(0) - 5 + this.w(1), this.y(0) + 5);
+    this.graphics.vertex(this.x(0) - 5 + this.w(1), this.y(0) - 5 + this.h(1));
+    this.graphics.vertex(this.x(0) + 5, this.y(0) - 5 + this.h(1));
     // this.graphics.vertex(5,5);
     // this.graphics.vertex(-5+this.pos.w,5);
     // this.graphics.vertex(-5+this.pos.w,-5+this.pos.h);
@@ -123,14 +148,17 @@ class GraphicsImg {
   textAlign(mode) {
     this.graphics.textAlign(mode);
   }
-  fill(r, g, b) {
-    this.graphics.fill(r, g, b);
+  noFill() {
+    this.graphics.noFill();
+  }
+  fill(r, g, b, a) {
+    this.graphics.fill(r, g, b, a);
   }
   noStroke() {
     this.graphics.noStroke();
   }
-  stroke(r, g, b) {
-    this.graphics.stroke(r, g, b);
+  stroke(r, g, b, a) {
+    this.graphics.stroke(r, g, b, a);
   }
   strokeWeight(n) {
     this.graphics.strokeWeight(n);
@@ -155,7 +183,7 @@ class GraphicsImg {
 
   draw(ctx) {
     // if (this.isbuilt()) image(this.graphics,this.x,this.y);
-    if (this.isBuilt())
+    if (this.isBuilt() && this.getStyle("display"))
       ctx.drawImage(
         this.bitmap,
         round(this.pos.x),
