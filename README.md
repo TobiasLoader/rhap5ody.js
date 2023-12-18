@@ -6,6 +6,8 @@
 
 ## Example Demo
 
+View a demo project using `rhap5ody.js` [here](https://tobiasloader.github.io/rhap5ody.js/example/).
+
 ![space scene demo](imgs/earth-demo-scene.png)
 
 ### `Obj` class
